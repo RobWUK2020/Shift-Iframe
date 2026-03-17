@@ -1,0 +1,503 @@
+<iframe style="width: 100%; height: 850px; border: none; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);" srcdoc='
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>KFC My Schedule</title>
+    <style>
+        :root {
+            --kfc-red: #E4002B;
+            --kfc-dark-red: #A3001E;
+            --kfc-white: #FFFFFF;
+            --kfc-black: #000000;
+            --bg-light: #F4F4F4;
+            --text-dark: #333333;
+            --text-gray: #666666;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #d9d9d9;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 450px;
+            background-color: var(--bg-light);
+            min-height: 100vh;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            background-color: var(--kfc-white);
+            color: var(--kfc-black);
+            padding: 20px;
+            text-align: center;
+            border-bottom: 5px solid var(--kfc-red);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .logo-stripes {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 10px;
+        }
+        .stripe {
+            width: 10px;
+            height: 30px;
+            background-color: var(--kfc-red);
+        }
+
+        header h1 {
+            font-size: 1.5rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: -0.5px;
+        }
+
+        header p {
+            font-size: 0.9rem;
+            color: var(--text-gray);
+            margin-top: 5px;
+        }
+
+        main {
+            padding: 20px;
+            flex-grow: 1;
+            padding-bottom: 100px;
+        }
+
+        h2 {
+            font-size: 1.2rem;
+            color: var(--kfc-black);
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            font-weight: 800;
+        }
+
+        .shift-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .shift-card {
+            background-color: var(--kfc-white);
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            border-left: 6px solid var(--kfc-red);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .shift-info h3 {
+            font-size: 1.1rem;
+            color: var(--kfc-black);
+            margin-bottom: 5px;
+        }
+
+        .shift-info p {
+            font-size: 0.9rem;
+            color: var(--text-gray);
+            margin-bottom: 3px;
+        }
+
+        .shift-role {
+            font-weight: bold;
+            color: var(--kfc-black);
+            font-size: 0.9rem;
+            background-color: #eee;
+            padding: 3px 8px;
+            border-radius: 4px;
+            display: inline-block;
+            margin-top: 5px;
+        }
+
+        .btn-container {
+            display: flex;
+            gap: 10px;
+            margin-top: 25px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            text-align: center;
+            text-transform: uppercase;
+            transition: opacity 0.2s;
+        }
+
+        .btn:active {
+            opacity: 0.8;
+        }
+
+        .btn-swap-main {
+            background-color: var(--kfc-black);
+            color: var(--kfc-white);
+        }
+
+        .btn-open-main {
+            background-color: var(--kfc-red);
+            color: var(--kfc-white);
+        }
+
+        .btn-small {
+            padding: 8px 15px;
+            font-size: 0.85rem;
+            border-radius: 4px;
+            font-weight: bold;
+            text-transform: uppercase;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-small-swap {
+            background-color: var(--kfc-black);
+            color: var(--kfc-white);
+        }
+
+        .btn-small-claim {
+            background-color: var(--kfc-red);
+            color: var(--kfc-white);
+        }
+
+        footer {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            max-width: 450px;
+            background-color: var(--kfc-white);
+            border-top: 2px solid var(--kfc-red);
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 -5px 15px rgba(0,0,0,0.1);
+            z-index: 5;
+        }
+
+        .total-hours-label {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: var(--kfc-black);
+            text-transform: uppercase;
+        }
+
+        .total-hours-value {
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: var(--kfc-red);
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.7);
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 20;
+        }
+
+        .modal-overlay.active {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .modal-content {
+            background-color: var(--bg-light);
+            width: 100%;
+            max-width: 450px;
+            height: 85%;
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
+            padding: 25px 20px;
+            transform: translateY(100%);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 15px;
+        }
+
+        .modal-header h2 {
+            margin-bottom: 0;
+            border: none;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 2rem;
+            cursor: pointer;
+            color: var(--kfc-black);
+            line-height: 1;
+        }
+
+        .modal-body {
+            overflow-y: auto;
+            flex-grow: 1;
+            padding-bottom: 20px;
+        }
+
+        .toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: var(--kfc-black);
+            color: var(--kfc-white);
+            padding: 15px 25px;
+            border-radius: 8px;
+            font-weight: bold;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            z-index: 100;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+            text-align: center;
+            width: 90%;
+            max-width: 400px;
+        }
+
+        .toast.show {
+            opacity: 1;
+            visibility: visible;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <header>
+            <div class="logo-stripes">
+                <div class="stripe"></div>
+                <div class="stripe"></div>
+                <div class="stripe"></div>
+            </div>
+            <h1>Patrick&apos;s Schedule</h1>
+            <p>Week of March 24, 2026</p>
+        </header>
+
+        <main>
+            <h2>Upcoming Shifts</h2>
+            <div class="shift-list" id="my-shifts-container">
+            </div>
+
+            <div class="btn-container">
+                <button class="btn btn-swap-main" onclick="openModal(&quot;swap-modal&quot;)">Shift Swap</button>
+                <button class="btn btn-open-main" onclick="openModal(&quot;claim-modal&quot;)">Open Shifts</button>
+            </div>
+        </main>
+
+        <footer>
+            <div class="total-hours-label">Total Hours:</div>
+            <div class="total-hours-value" id="total-hours-display">0</div>
+        </footer>
+
+        <div class="modal-overlay" id="swap-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Select Shift to Swap</h2>
+                    <button class="close-btn" onclick="closeModal(&quot;swap-modal&quot;)">&times;</button>
+                </div>
+                <div class="modal-body shift-list" id="swap-list-container">
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-overlay" id="claim-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Available Open Shifts</h2>
+                    <button class="close-btn" onclick="closeModal(&quot;claim-modal&quot;)">&times;</button>
+                </div>
+                <div class="modal-body shift-list" id="claim-list-container">
+                </div>
+            </div>
+        </div>
+
+        <div id="toast" class="toast">Action Successful!</div>
+    </div>
+
+    <script>
+        let myShifts = [
+            { id: 1, sortOrder: 1, day: "Tuesday, 24th March", time: "09:00 AM - 04:00 PM", role: "Front Counter", hours: 7 },
+            { id: 2, sortOrder: 3, day: "Thursday, 26th March", time: "11:00 AM - 07:00 PM", role: "Drive-Thru Window", hours: 8 },
+            { id: 3, sortOrder: 5, day: "Saturday, 28th March", time: "04:00 PM - 11:00 PM", role: "Fry Cook", hours: 7 },
+            { id: 4, sortOrder: 6, day: "Sunday, 29th March", time: "12:00 PM - 08:00 PM", role: "Expeditor / Packer", hours: 8 }
+        ];
+
+        let openShifts = [
+            { id: 101, sortOrder: 2, day: "Wednesday, 25th March", time: "10:00 AM - 03:00 PM", role: "Front Counter", hours: 5 },
+            { id: 102, sortOrder: 4, day: "Friday, 27th March", time: "05:00 PM - 11:00 PM", role: "Kitchen Prep", hours: 6 },
+            { id: 103, sortOrder: 7, day: "Monday, 30th March", time: "08:00 AM - 02:00 PM", role: "Drive-Thru Headset", hours: 6 }
+        ];
+
+        function updateApp() {
+            renderMyShifts();
+            calculateTotalHours();
+        }
+
+        function renderMyShifts() {
+            const container = document.getElementById("my-shifts-container");
+            container.innerHTML = "";
+            
+            myShifts.sort((a, b) => a.sortOrder - b.sortOrder);
+
+            if(myShifts.length === 0) {
+                container.innerHTML = `<p style="color: #666; font-style: italic;">You have no shifts scheduled this week.</p>`;
+                return;
+            }
+
+            myShifts.forEach(shift => {
+                container.innerHTML += `
+                    <div class="shift-card">
+                        <div class="shift-info">
+                            <h3>` + shift.day + `</h3>
+                            <p>` + shift.time + `</p>
+                            <span class="shift-role">` + shift.role + `</span>
+                        </div>
+                        <div style="font-weight: bold; color: var(--text-gray); font-size: 0.9rem;">
+                            ` + shift.hours + ` hrs
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function calculateTotalHours() {
+            const total = myShifts.reduce((sum, shift) => sum + shift.hours, 0);
+            document.getElementById("total-hours-display").innerText = total + " hrs";
+        }
+
+        function openModal(modalId) {
+            if (modalId === "swap-modal") renderSwapModal();
+            if (modalId === "claim-modal") renderClaimModal();
+            document.getElementById(modalId).classList.add("active");
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove("active");
+        }
+
+        function renderSwapModal() {
+            const container = document.getElementById("swap-list-container");
+            container.innerHTML = "";
+
+            if(myShifts.length === 0) {
+                container.innerHTML = `<p>No shifts available to swap.</p>`;
+                return;
+            }
+
+            myShifts.forEach(shift => {
+                container.innerHTML += `
+                    <div class="shift-card">
+                        <div class="shift-info">
+                            <h3>` + shift.day + `</h3>
+                            <p>` + shift.time + `</p>
+                        </div>
+                        <button class="btn-small btn-small-swap" onclick="processSwap(` + shift.id + `)">Swap This</button>
+                    </div>
+                `;
+            });
+        }
+
+        function renderClaimModal() {
+            const container = document.getElementById("claim-list-container");
+            container.innerHTML = "";
+
+            if(openShifts.length === 0) {
+                container.innerHTML = `<p>No open shifts available to claim.</p>`;
+                return;
+            }
+
+            openShifts.forEach(shift => {
+                container.innerHTML += `
+                    <div class="shift-card">
+                        <div class="shift-info">
+                            <h3>` + shift.day + `</h3>
+                            <p>` + shift.time + `</p>
+                            <p style="font-size: 0.8rem; color: #666; margin-top:2px;">` + shift.role + ` (` + shift.hours + ` hrs)</p>
+                        </div>
+                        <button class="btn-small btn-small-claim" onclick="processClaim(` + shift.id + `)">Claim</button>
+                    </div>
+                `;
+            });
+        }
+
+        function processSwap(shiftId) {
+            myShifts = myShifts.filter(s => s.id !== shiftId);
+            closeModal("swap-modal");
+            updateApp();
+            showToast("Shift swap request submitted!");
+        }
+
+        function processClaim(shiftId) {
+            const shiftIndex = openShifts.findIndex(s => s.id === shiftId);
+            
+            if(shiftIndex > -1) {
+                const shift = openShifts[shiftIndex];
+                openShifts.splice(shiftIndex, 1);
+                myShifts.push(shift);
+                closeModal("claim-modal");
+                updateApp();
+                showToast("Claimed! Added " + shift.hours + " hours to your schedule.");
+            }
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById("toast");
+            toast.innerText = message;
+            toast.classList.add("show");
+            setTimeout(() => {
+                toast.classList.remove("show");
+            }, 3000);
+        }
+
+        updateApp();
+    </script>
+</body>
+</html>
+'></iframe>
